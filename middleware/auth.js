@@ -69,3 +69,21 @@ exports.isAdmin = async(req, res, next) => {
         })
     }
 }
+
+exports.isAdminOrSeller = async (req, res , next) => {
+    try {
+        if(req.user.role !== "admin" || req.user.role !== "seller" ){
+            return res.status(401).json({
+                success:false, 
+                message : "this route is not valid for customer"
+            })
+        }
+        next();
+    } catch (error) {
+        return res.status(400).json({
+            success: false,
+            message : "Error : user verification failed",
+            error : error.message
+        })
+    }
+}
