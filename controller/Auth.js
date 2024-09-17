@@ -1,14 +1,14 @@
 const bcrypt = require("bcrypt");
-const mailSender = require("../utils/mailSender");
-const signupSuccessTemplate = require("../mail/template/signUp");
+// const mailSender = require("../utils/mailSender");
+// const signupSuccessTemplate = require("../mail/template/signUp");
 const User = require("../models/user");
 const jwt = require("jsonwebtoken")
 
 exports.signUp = async(req, res) => {
     try {
-        const {email, firstName, lastName, password, confirmPassword, role} = req.body;
+        const {email, fullName, password, confirmPassword, role} = req.body;
         console.log("req body ", req.body)
-        if(!firstName || !email || !password || !confirmPassword ){
+        if(!fullName || !email || !password || !confirmPassword ){
             return res.status(403).json({
                 success:false,
                 message:"All field are required"
@@ -35,15 +35,15 @@ exports.signUp = async(req, res) => {
         const hashedPassword = await bcrypt.hash(password, 10);
 
         const user = await User.create({
-            firstName,
-            lastName,
+            fullName,
             email,
             password:hashedPassword,
-            role:role
+            role:role,
+            profileImage :`https://api.dicebear.com/5.x/initials/svg?seed=${fullName}`
 
         })
 
-        await mailSender(email, "Sign Up Successfully", signupSuccessTemplate(firstName,email) );
+        // await mailSender(email, "Sign Up Successfully", signupSuccessTemplate(firstName,email) );
         return res.status(200).json({
             success:true,
             message:"User is Registered Successfully",
@@ -71,7 +71,7 @@ exports.login = async(req,res) => {
             })
         }
 
-        const existingUser = await User.findOne({email}).populate("orderHistory")
+        const existingUser = await User.findOne({email:email})
         if (!existingUser) {
             return res.status(400).json({
                 success: false,

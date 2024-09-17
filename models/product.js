@@ -3,12 +3,12 @@ const { default: mongoose } = require("mongoose");
 const productSchema = new mongoose.Schema({
     categoryId: { type: mongoose.Schema.Types.ObjectId, ref: 'Category', required: true }, 
     name: { type: String, required: true },
-    originalprice : {type : number},
-    discount : {type : number},
-    price : {type : number},
+    originalPrice : {type : Number},
+    discount : {type : Number},
+    price : {type : Number},
     about: { type: String },
     ratingAndReviewIds: [{ type: mongoose.Schema.Types.ObjectId, ref: 'RatingAndReview' }], 
-    images: [{ type: String }], 
+    image: [{ type: String }], 
     sellerId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true } 
   });
   
