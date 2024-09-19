@@ -12,6 +12,7 @@ const {cloudinaryConnect} = require("./config/cloudinary");
 const categoryRoute = require("./route/Category");
 const authRoute = require("./route/Auth");
 const productRoute = require("./route/Product");
+const searchRoute = require("./route/Search")
 
 const app = express();
 
@@ -40,6 +41,8 @@ app.use(
 app.use("/api/v1/category", categoryRoute );
 app.use("/api/v1/auth", authRoute)
 app.use("/api/v1/product", productRoute)
+app.use("/api/v1/search", searchRoute)
+
 
 
 cloudinaryConnect();

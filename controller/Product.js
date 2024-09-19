@@ -4,7 +4,7 @@ const { uploadToCloudinary } = require("../utils/uploader");
 
 exports.createProduct = async (req, res) => {
     try {
-        const { categoryId, name, about, originalPrice, price, sellerId } = req.body;
+        const { categoryId, name, about, originalPrice, price, sellerId, state,city } = req.body;
 
         
         if (!name || !originalPrice || !price || !sellerId || !categoryId) {
@@ -36,7 +36,9 @@ exports.createProduct = async (req, res) => {
             sellerId,
             originalPrice,
             discount: discount,
-            image: uploadedImages
+            image: uploadedImages,
+            state,
+            city
         });
 
         

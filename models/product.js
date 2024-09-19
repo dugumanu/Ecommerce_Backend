@@ -9,7 +9,9 @@ const productSchema = new mongoose.Schema({
     about: { type: String },
     ratingAndReviewIds: [{ type: mongoose.Schema.Types.ObjectId, ref: 'RatingAndReview' }], 
     image: [{ type: String }], 
-    sellerId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true } 
+    sellerId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true } ,
+    state:{type:String},
+    city:{type: String}
   });
   
   const Product = mongoose.model('Product', productSchema);

@@ -1,9 +1,11 @@
 const Category = require("../models/category");
+const { uploadToCloudinary } = require("../utils/uploader");
 
 
 exports.createCategory = async (req, res) => {
     try {
         const { name, description } = req.body;
+        const {image,banner} = req.files;
 
         
         if (!name || !description) {
@@ -21,11 +23,16 @@ exports.createCategory = async (req, res) => {
                 message: "Category already exists, can't create"
             });
         }
+        const uploadImage = await uploadToCloudinary(image,'Ecommerce');
+        const uploadBanner = await uploadToCloudinary(banner, " Ecommerce");
+
 
         
         const newCategory = new Category({
             name,
-            description
+            description,
+            image: uploadImage.secure_url,
+            banner : uploadBanner.secure_url
         });
 
         await newCategory.save();
