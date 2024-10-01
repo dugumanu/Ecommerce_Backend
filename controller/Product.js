@@ -65,6 +65,43 @@ exports.createProduct = async (req, res) => {
     }
 };
 
+exports.getProductByCategory = async (req, res) => {
+    try {
+        const { categoryId } = req.params;
+
+        if (!categoryId) {
+            return res.status(400).json({
+                message: "Category ID not found",
+                success: false
+            });
+        }
+
+        const products = await Product.find({ categoryId: categoryId }).populate("categoryId");
+
+        
+        // if (products.length === 0) {
+        //     return res.status(404).json({
+        //         message: "No products found in this category",
+        //         success: false
+        //     });
+        // }
+
+        return res.status(200).json({
+            message: "Products found successfully",
+            success: true,
+            products: products
+        });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({
+            message: "Server error",
+            success: false,
+            error: error.message
+        });
+    }
+};
+
+
 
 exports.getProductById = async (req, res) => {
     try {
