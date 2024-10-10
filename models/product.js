@@ -11,7 +11,13 @@ const productSchema = new mongoose.Schema({
     image: [{ type: String }], 
     sellerId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true } ,
     state:{type:String},
-    city:{type: String}
+    city:{type: String},
+    buyer: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref : "User"
+      }
+    ]
   });
   
   const Product = mongoose.model('Product', productSchema);

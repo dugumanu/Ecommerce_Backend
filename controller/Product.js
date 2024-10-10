@@ -76,7 +76,7 @@ exports.getProductByCategory = async (req, res) => {
             });
         }
 
-        const products = await Product.find({ categoryId: categoryId }).populate("categoryId");
+        const products = await Category.find({ _id: categoryId }).populate("products");
 
         
         // if (products.length === 0) {
@@ -150,6 +150,33 @@ exports.getAllProducts = async (req, res) => {
         });
     }
 };
+
+module.exports.forYou = async (req, res) => {
+    try {
+        
+        const productIds = await Product.aggregate().sample(12);
+        
+        
+        const products = await Product.find({ _id: { $in: productIds.map(product => product._id) } })
+            .populate('categoryId')
+            .populate('sellerId');
+        
+        return res.status(200).json({
+            message: "Products fetched successfully",
+            success: true,
+            products
+        });
+
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({
+            message: "Server error",
+            success: false,
+            error: error.message
+        });
+    }
+};
+
 
 
 exports.updateProduct = async (req, res) => {
