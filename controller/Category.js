@@ -109,3 +109,37 @@ exports.getAllCategory = async (req, res) => {
         });
     }
 };
+
+
+
+exports.deleteCategoryById = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        // Find the category by ID
+        const category = await Category.findOneAndDelete(id);
+
+        // Check if the category exists
+        if (!category) {
+            return res.status(404).json({
+                success: false,
+                message: "Category not found",
+            });
+        }
+
+        // Delete the category from the database
+        await category.remove();
+
+        return res.status(200).json({
+            success: true,
+            message: "Category deleted successfully",
+        });
+    } catch (error) {
+        console.log("Error in deleting category by id:", error);
+        return res.status(500).json({
+            success: false,
+            message: "Failed to delete category",
+            error: error.message,
+        });
+    }
+};
