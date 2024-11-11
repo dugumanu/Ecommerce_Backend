@@ -38,6 +38,12 @@ app.use(
     })
 );
 
+app.get("/", (req, res) => {
+    res.status(200).json({ message: "Server is running", timestamp: new Date() });
+});
+
+
+
 app.use("/api/v1/category", categoryRoute );
 app.use("/api/v1/auth", authRoute)
 app.use("/api/v1/product", productRoute)
