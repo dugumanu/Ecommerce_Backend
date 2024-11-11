@@ -22,12 +22,11 @@ db.connect();
 app.use(express.json());
 app.use(cookieParser())
 
-const localhost = "http://localhost:3000";
- const originUrl = "";
+
 
 app.use(
     cors({
-        origin: [localhost, originUrl],
+        origin: [process.env.localhost, process.env.originUrl],
         credentials: true,
     })
 );
