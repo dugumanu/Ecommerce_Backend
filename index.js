@@ -14,6 +14,8 @@ const authRoute = require("./route/Auth");
 const productRoute = require("./route/Product");
 const searchRoute = require("./route/Search");
 const ratingAndReview = require("./route/RatingAndReview")
+const orderRoute = require("./route/Order")
+
 
 const app = express();
 
@@ -49,6 +51,8 @@ app.use("/api/v1/auth", authRoute)
 app.use("/api/v1/product", productRoute)
 app.use("/api/v1/search", searchRoute)
 app.use("/api/v1/ratingandreview", ratingAndReview)
+app.use("/api/v1/order", orderRoute)
+
 
 
 

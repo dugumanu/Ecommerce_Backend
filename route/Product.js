@@ -7,7 +7,8 @@ const {
     updateProduct, 
     deleteProduct, 
     getProductByCategory,
-    forYou
+    forYou,
+    getProductByUserId
 } = require("../controller/Product");
 
 const router = express.Router();
@@ -28,5 +29,6 @@ router.put("/updateproductbyid/:id", auth, isAdminOrSeller, updateProduct);
 
 router.delete("/deleteproductbyid/:id", auth, isAdminOrSeller, deleteProduct);
 router.get("/foryou", forYou)
+router.get("/getproductbyuserid",auth, isAdminOrSeller, getProductByUserId)
 
 module.exports = router;

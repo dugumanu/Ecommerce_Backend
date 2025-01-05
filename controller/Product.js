@@ -5,9 +5,8 @@ const { uploadToCloudinary } = require("../utils/uploader");
 exports.createProduct = async (req, res) => {
     try {
         const { categoryId, name, about, originalPrice, price, sellerId, state,city } = req.body;
-
         
-        if (!name || !originalPrice || !price || !sellerId || !categoryId) {
+        if (!name || !originalPrice || !price  || !categoryId) {
             return res.status(400).json({
                 message: "All fields are required",
                 success: false
@@ -38,7 +37,8 @@ exports.createProduct = async (req, res) => {
             discount: discount,
             image: uploadedImages,
             state,
-            city
+            city,
+            sellerId : req.user.id
         });
 
         
@@ -257,3 +257,25 @@ exports.deleteProduct = async (req, res) => {
         });
     }
 };
+
+
+exports.getProductByUserId =async (req, res) => {
+    try {
+        const sellerId = req.user.id;
+        const products = await Product.find({sellerId:sellerId}).populate('categoryId').populate('sellerId');
+        
+        return res.status(200).json({
+            message: "Products fetched successfully",
+            success: true,
+            products
+        });
+
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({
+            message: "Server error",
+            success: false,
+            error: error.message
+        });
+    }
+}
