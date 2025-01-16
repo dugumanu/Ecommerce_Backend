@@ -1,4 +1,5 @@
 const Category = require("../models/category");
+const Product = require("../models/product");
 const { uploadToCloudinary } = require("../utils/uploader");
 
 
@@ -85,7 +86,7 @@ exports.getCategory = async (req, res) => {
 
 exports.getAllCategory = async (req, res) => {
     try {
-        const categories = await Category.find();
+        const categories = await Category.find().sort({ name: 1 });;
 
         
         if (categories.length === 0) {
@@ -127,13 +128,16 @@ exports.deleteCategoryById = async (req, res) => {
             });
         }
 
-        // Delete the category from the database
-        await category.remove();
+        await Product.deleteMany({ categoryId: id });
 
         return res.status(200).json({
             success: true,
-            message: "Category deleted successfully",
+            message: "Category and associated products deleted successfully",
         });
+
+        
+
+        
     } catch (error) {
         console.log("Error in deleting category by id:", error);
         return res.status(500).json({

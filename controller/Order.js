@@ -18,7 +18,7 @@ exports.buyOrder = async (req, res) => {
                 return res.status(404).json({ error: "No valid products found for the provided IDs" });
             }
         } else {
-            const product = await Product.findById(productData.id);
+            const product = await Product.findById(productData._id);
             if (!product) {
                 return res.status(404).json({ error: "Product not found" });
             }
@@ -35,10 +35,12 @@ exports.buyOrder = async (req, res) => {
 
         
         for (const product of selectedProducts) {
+
+            console.log("Product ====== ", product)
             const newPayment = new Payment({
                 productId: product._id,
                 paymentMode: paymentMethod,
-                paymentStatus: "notPaid",
+                paymentStatus: "Not Paid",
                 transactionId: generatedTransactionId,
                 userId,
                 amount: product.price,
@@ -56,6 +58,7 @@ exports.buyOrder = async (req, res) => {
                 quantity: 1,
                 status: "pending", 
                 paymentStatus: newPayment._id, 
+                sellerId: product.sellerId
             });
 
             await newOrder.save();
@@ -77,3 +80,115 @@ exports.buyOrder = async (req, res) => {
         });
     }
 };
+
+
+exports.myOrder = async (req, res) => {
+    try {
+        const userId = req.user.id;
+
+        // Fetch orders and populate productId, paymentStatus, and categoryId
+        const order = await Order.find({ userId: userId })
+            .populate({
+                path: "productId",
+                populate: { path: "categoryId", select: "name" }, // Populate categoryId inside productId
+            })
+            .populate("paymentStatus") // Populate paymentStatus
+            .sort({ createdAt: -1 });
+
+        
+
+        return res.status(200).json({
+            success: true,
+            message: "Order fetched successfully",
+            order,
+        });
+    } catch (error) {
+        console.error("Error in fetching order:", error);
+        return res.status(500).json({
+            success: false,
+            message: "Failed to fetch the order. Please try again later.",
+            error: error.message,
+        });
+    }
+};
+
+
+exports.sellerOrder = async (req, res) => {
+    try {
+        const userId = req.user.id;
+
+        const order = await Order.find({ sellerId: userId })
+            .populate({
+                path: "productId",
+                populate: { path: "categoryId", select: "name" }, // Populate categoryId inside productId
+            })
+            .populate("paymentStatus") 
+            .sort({ createdAt: -1 });
+
+        
+
+        return res.status(200).json({
+            success: true,
+            message: "Order fetched successfully",
+            order,
+        });
+    } catch (error) {
+        console.error("Error in fetching order:", error);
+        return res.status(500).json({
+            success: false,
+            message: "Failed to fetch the order. Please try again later.",
+            error: error.message,
+        });
+    }
+};
+
+
+exports.orderStatus =   async (req, res) => {
+    const { orderId, paymentId, orderStatus, paymentStatus } = req.body;
+
+    console.log("REQ BODY :", req.body)
+  
+    
+    const validOrderStatuses = ['pending', 'shipped', 'delivered', 'cancelled'];
+    const validPaymentStatuses = ['Paid', 'Not Paid', 'Pending', 'Failed'];
+  
+    if (!validOrderStatuses.includes(orderStatus)) {
+      return res.status(400).json({ error: 'Invalid order status' });
+    }
+  
+    if (!validPaymentStatuses.includes(paymentStatus)) {
+      return res.status(400).json({ error: 'Invalid payment status' });
+    }
+  
+    try {
+      
+      const order = await Order.findByIdAndUpdate(
+        orderId,
+        { status: orderStatus },
+        { new: true, runValidators: true }
+      );
+  
+      if (!order) {
+        return res.status(404).json({ error: 'Order not found' });
+      }
+  
+      
+      const payment = await Payment.findByIdAndUpdate(
+        paymentId,
+        { paymentStatus },
+        { new: true, runValidators: true }
+      );
+  
+      if (!payment) {
+        return res.status(404).json({ error: 'Payment not found' });
+      }
+  
+      
+      res.json({
+        order,
+        payment,
+      });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  }
